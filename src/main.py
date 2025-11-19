@@ -18,13 +18,15 @@ class myapp:
         page.bgcolor = Colors.BLACK26
         page.theme_mode = "dark"
         page.scroll = ft.ScrollMode.ADAPTIVE
+        page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
+        #---Comprobador de selección de item del menú principal---
         def check_item_clicked(e):
             # El ítem de menú actual que fue clickeado (e.control)
             item_click = e.control
             
-            #--Obtenemos la lista de items del PopupMenuButton,
-            #--asumiendo que el PopupMenuButton es el último action del AppBar
+            #--Obtención de la lista de items del PopupMenuButton,
+            #--Asumiendo que el PopupMenuButton es el último action del AppBar
             menu_items = page.appbar.actions[-1].items
             
             #---Los items de contenido son el índice 0 ("APOD") y el 2 ("Asteroids NeoWs")
@@ -57,8 +59,23 @@ class myapp:
                 page.remove(news_container)
                 page.add(asteroid_container)
             
-        #---Actualizar la interfaz
-        page.update()
+        #---Calendario (DatePicker)---
+        def date_picker(e):
+            page.open(ft.DatePicker(
+                            first_date=datetime.datetime(year=2000, month=10, day=1),
+                            last_date=datetime.datetime(year=2030, month=12, day=31),
+                            on_change=handle_change,
+                            on_dismiss=handle_dismissal
+                        )
+                    )
+        #---Fecha seleccionada---   
+        def handle_change(e):
+            #page.add(ft.Text(f"Date changed: {e.control.value.strftime('%d/%m/%Y')}"))
+            pass
+
+        def handle_dismissal(e):
+            #page.add(ft.Text(f"DatePicker dismissed"))
+            pass
 
         page.appbar = ft.AppBar(
         leading=ft.Icon(ft.Icons.NEWSPAPER),
@@ -67,7 +84,9 @@ class myapp:
         center_title=False,
         bgcolor=ft.Colors.SURFACE_CONTAINER_HIGHEST,
         actions=[
-            ft.IconButton(ft.Icons.CALENDAR_MONTH),
+            ft.IconButton(ft.Icons.CALENDAR_MONTH, 
+                          on_click=date_picker,
+            ),
             ft.PopupMenuButton(
                 items=[
                     ft.PopupMenuItem(text="APOD", 
@@ -85,7 +104,7 @@ class myapp:
             ), 
         ],   
     )
-        
+
         #---Resultados de conexón con la API's---
         if Apod: #---Si la conexión con la API APOD es éxitosa---
             #---Widgets de modulo News--- 
@@ -101,14 +120,13 @@ class myapp:
                         )
             
             #---Convertidor de la cadena date en un objeto 'datetime'---
-            date_objeto = datetime.strptime(Apod['date'], ORIGINAL_API_FORMAT) 
+            #date_objeto = datetime.strptime(Apod['date'], ORIGINAL_API_FORMAT) 
 
             #---Formatea el objeto 'datetime' al nuevo formato de cadena---
-            date_format = date_objeto.strftime(API_DATE_FORMAT)
+            #date_format = date_objeto.strftime(API_DATE_FORMAT)
 
             #---Fecha de la publicación---
-            dates = ft.Text(
-                            date_format,
+            dates = ft.Text(Apod['date'],
                             size=17,
                             color=ft.Colors.WHITE,
                             text_align=ft.TextAlign.CENTER)
@@ -166,8 +184,8 @@ class myapp:
             )
 
             #---Fecha de la publicación---
-            start_date = list(Neows['near_earth_objects'].keys())[0] # Fecha de inicio de la busqueda
-            end_date= list(Neows['near_earth_objects'].keys())[1] # Fecha final de la busqueda
+            start_date = list(Neows['near_earth_objects'].keys())[1] # Fecha de inicio de la busqueda
+            end_date= list(Neows['near_earth_objects'].keys())[0] # Fecha final de la busqueda
 
             dates = ft.Text(f"From: " + str(start_date) + " / To: " + str(end_date),
                             size=16,

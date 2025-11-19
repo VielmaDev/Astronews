@@ -40,8 +40,8 @@ def neows(): # Conexión a la Api NeoWs (Near Earth Object Web Service)
                 # Parámetros de busqueda
                 params= {
                     "api_key":api_key,
-                    "start_date":'2010-09-07',
-                    "end_date":'2010-09-08',
+                    "start_date":now,
+                    "end_date":'2025-11-20',
                     }
                 # Intenta realizar la solicitud GET a la API
                 response = requests.get(URL_API_NEOWS, params= params)
@@ -55,3 +55,6 @@ def neows(): # Conexión a la Api NeoWs (Near Earth Object Web Service)
 
         except json.JSONDecodeError as e:
            neows_data=(f"Error al decodificar JSON: {e}")  # Maneja errores al decodificar JSON
+
+def search_date_picker():
+      pass
