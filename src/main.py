@@ -11,6 +11,8 @@ API_DATE_FORMAT = "%d-%m-%Y" #Nuevo formato fecha a convertir.
 #---Conexión con módulo dbapi--- 
 Apod= dbapi.apod()
 Neows= dbapi.neows()
+Alert= dbapi.alert() # Llama a la función control de falla de conexión API´s
+
 
 class myapp:
     def __init__(self, page: ft.Page):
@@ -58,15 +60,14 @@ class myapp:
                 page.remove(news_container)
                 page.add(asteroid_container)
             
+        #---Widget Calendario---
         def handle_change(e):  #---Función fecha seleccionada---
             #page.add(ft.Text(f"Date changed: {e.control.value.strftime('%m/%d/%Y')}"))
             selected_date = e.control.value.strftime('%Y/%m/%d')
             dbapi.search_date_picker(selected_date)
-        
         def handle_dismissal(e): 
             #page.add(ft.Text(f"DatePicker dismissed"))
             pass
-        
         def date_picker(e):  #---Calendario (DatePicker)---
             page.open(ft.DatePicker(
                             first_date=datetime.datetime
@@ -77,16 +78,6 @@ class myapp:
                             on_dismiss=handle_dismissal
                         )
                     )
-            
-       #---Control de alerta falla en conexión con las API's
-        dlg= ft.AlertDialog(
-                        title=Text("Alert"),
-                        content=Text("No connection to the API network!"),
-                        alignment=alignment.center,
-                        on_dismiss=lambda e: print("Dialog dismissed!"),
-                        title_padding=ft.padding.all(25),
-                    )
-        page.add(dlg)
             
         #---Barra principal del menú---
         page.appbar = ft.AppBar(
@@ -184,6 +175,8 @@ class myapp:
                     ),padding=20 
                 )  
         else: #---Si la conexión es fallida---
+            page.add(Alert)
+            page.open(Alert)
             label = Text(f"Astronomy Picture of the Day", 
                             size=20,
                             color=ft.Colors.RED,
@@ -199,7 +192,7 @@ class myapp:
                         ],
                     ),padding=20 
                 )
-            page.open(dlg)  
+           
 
         #---Widget Asteriod NeoWs---
         label = Text("Near Earth Object Web Service", #---Encabezado principal de Asteroid NeoWs---

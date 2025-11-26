@@ -57,5 +57,15 @@ def neows(): # Conexión a la Api NeoWs (Near Earth Object Web Service)
            neows_data=(f"Error al decodificar JSON: {e}")  # Maneja errores al decodificar JSON
 
 
+def alert(): #---Control falla en conexión con las API's
+        return ft.AlertDialog(
+                    title=ft.Text("Alert"),
+                    content=ft.Text("No connection to the API network!"),
+                    alignment=ft.alignment.center,
+                    on_dismiss=lambda e: print("Dialog dismissed!"),
+                    title_padding=ft.padding.all(25),
+        )
+
+
 def search_date_picker(request):
     pass
