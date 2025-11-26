@@ -20,8 +20,7 @@ class myapp:
         page.scroll = ft.ScrollMode.ADAPTIVE
         page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
-        #---Comprobador de selección de item del menú principal---
-        def check_item_clicked(e):
+        def check_item_clicked(e):  #---Función selector de item del menú principal---
             # El ítem de menú actual que fue clickeado (e.control)
             item_click = e.control
             
@@ -43,7 +42,7 @@ class myapp:
                 neows_item.disabled = False
                 
                 #---Actualizar el AppBar y el contenido de la página
-                page.appbar.title = ft.Text("APOD: Astronomy Picture of the Day")
+                page.appbar.title = Text("APOD")
                 page.appbar.leading = ft.Icon(ft.Icons.NEWSPAPER)
                 page.remove(asteroid_container)
                 page.add(news_container)
@@ -54,35 +53,48 @@ class myapp:
                 apod_item.disabled = False
                 
                 #---Actualizar el AppBar y el contenido de la página
-                page.appbar.title = ft.Text("Asteroids NeoWs")
+                page.appbar.title = Text("Asteroids NeoWs")
                 page.appbar.leading = ft.Icon(ft.Icons.EXPLORE) #---Cambiamos el icono para el ejemplo
                 page.remove(news_container)
                 page.add(asteroid_container)
             
-        #---Calendario (DatePicker)---
-        def date_picker(e):
+        def handle_change(e):  #---Función fecha seleccionada---
+            #page.add(ft.Text(f"Date changed: {e.control.value.strftime('%m/%d/%Y')}"))
+            selected_date = e.control.value.strftime('%Y/%m/%d')
+            dbapi.search_date_picker(selected_date)
+        
+        def handle_dismissal(e): 
+            #page.add(ft.Text(f"DatePicker dismissed"))
+            pass
+        
+        def date_picker(e):  #---Calendario (DatePicker)---
             page.open(ft.DatePicker(
-                            first_date=datetime.datetime(year=2000, month=10, day=1),
-                            last_date=datetime.datetime(year=2030, month=12, day=31),
+                            first_date=datetime.datetime
+                                    (year=2000, month=10, day=1),
+                            last_date=datetime.datetime
+                                    (year=2030, month=12, day=31),
                             on_change=handle_change,
                             on_dismiss=handle_dismissal
                         )
                     )
-        #---Fecha seleccionada---   
-        def handle_change(e):
-            #page.add(ft.Text(f"Date changed: {e.control.value.strftime('%d/%m/%Y')}"))
-            pass
-
-        def handle_dismissal(e):
-            #page.add(ft.Text(f"DatePicker dismissed"))
-            pass
-
+            
+       #---Control de alerta falla en conexión con las API's
+        dlg= ft.AlertDialog(
+                        title=Text("Alert"),
+                        content=Text("No connection to the API network!"),
+                        alignment=alignment.center,
+                        on_dismiss=lambda e: print("Dialog dismissed!"),
+                        title_padding=ft.padding.all(25),
+                    )
+        page.add(dlg)
+            
+        #---Barra principal del menú---
         page.appbar = ft.AppBar(
         leading=ft.Icon(ft.Icons.NEWSPAPER),
         leading_width=35,
-        title=ft.Text("APOD: Astronomy Picture of the Day"),
+        title=Text("APOD"),
         center_title=False,
-        bgcolor=ft.Colors.SURFACE_CONTAINER_HIGHEST,
+        bgcolor=Colors.SURFACE_CONTAINER_HIGHEST,
         actions=[
             ft.IconButton(ft.Icons.CALENDAR_MONTH, 
                           on_click=date_picker,
@@ -105,12 +117,11 @@ class myapp:
         ],   
     )
 
-        #---Resultados de conexón con la API's---
-        if Apod: #---Si la conexión con la API APOD es éxitosa---
-            #---Widgets de modulo News--- 
-
+        #---Widget menú APOD---
+        #---Resultados de conexón con la API APOD---
+        if Apod: #---Si la conexión es éxitosa---
             #---Título de la publicación---        
-            label = ft.Text(f"{Apod['title']}", 
+            label = Text(f"{Apod['title']}", 
                             size=25,
                             color=ft.Colors.BLUE,
                             text_align=ft.TextAlign.CENTER)
@@ -126,7 +137,7 @@ class myapp:
             #date_format = date_objeto.strftime(API_DATE_FORMAT)
 
             #---Fecha de la publicación---
-            dates = ft.Text(Apod['date'],
+            dates = Text(Apod['date'],
                             size=17,
                             color=ft.Colors.WHITE,
                             text_align=ft.TextAlign.CENTER)
@@ -136,7 +147,7 @@ class myapp:
                         )
 
             #---Imagen de la publicación---
-            imagen = ft.Image(src=f"{Apod['url']}", width=380, height=380)
+            imagen = Image(src=f"{Apod['url']}", width=380, height=380)
             apod_imagen = Row(
                             controls=[imagen],
                             alignment="center", #---Alineación horizontal---
@@ -151,8 +162,7 @@ class myapp:
                                     text_align=ft.TextAlign.JUSTIFY),
                         ]),
                     padding=20)
-        else: #---Si la conexión con la API APOD es fallida---
-            #---Aviso de conexión fallida---
+        else: #---Si la conexión es fallida---
             label = ft.Text(f'Error: conexión fallida con el servidor', 
                             size=40,
                             color=ft.Colors.RED,
@@ -161,43 +171,47 @@ class myapp:
                             controls=[label],
                             alignment="center",
                         )
-
-        #---Resultados de conexón con la API's---
-        if Neows: #---Si la conexión con la API NeoWs es éxitosa---
-            #---Título de la publicación---
-            label = ft.Text("Near Earth Object Web Service", 
-                            size=23,
-                            color=ft.Colors.BLUE, 
+        #---Contenedor widgets Apod---
+        if Apod: #---Si la conexión es éxitosa---
+            news_container = Container(
+                    content=Column(
+                        controls=[
+                            apod_label,
+                            apod_date,
+                            apod_imagen,
+                            apod_content
+                        ],
+                    ),padding=20 
+                )  
+        else: #---Si la conexión es fallida---
+            label = Text(f"Astronomy Picture of the Day", 
+                            size=20,
+                            color=ft.Colors.RED,
                             text_align=ft.TextAlign.CENTER)
-            neows_label = Row(
+            apod_label = Row(
+                            controls=[label],
+                            alignment="center",
+                        )
+            news_container = Container(
+                    content=Column(
+                        controls=[
+                            apod_label,
+                        ],
+                    ),padding=20 
+                )
+            page.open(dlg)  
+
+        #---Widget Asteriod NeoWs---
+        label = Text("Near Earth Object Web Service", #---Encabezado principal de Asteroid NeoWs---
+                            size=20,
+                            color=ft.Colors.RED, 
+                            text_align=ft.TextAlign.CENTER)
+        neows_label = Row(
                         controls=[label],
                         alignment="center",
                     )
-            #---Contador de elementos widget Ateroid---
-            count = ft.Text(f"Elements: {Neows['element_count']}",
-                            size=16,
-                            color=ft.Colors.WHITE,
-                            text_align=ft.TextAlign.CENTER)
-            neows_count = Row(
-                        controls=[count],
-                        alignment="center", #---Alineación horizontal---
-            )
-
-            #---Fecha de la publicación---
-            start_date = list(Neows['near_earth_objects'].keys())[1] # Fecha de inicio de la busqueda
-            end_date= list(Neows['near_earth_objects'].keys())[0] # Fecha final de la busqueda
-
-            dates = ft.Text(f"From: " + str(start_date) + " / To: " + str(end_date),
-                            size=16,
-                            color=ft.Colors.YELLOW,
-                            text_align=ft.TextAlign.CENTER)
-            neows_date = Row(
-                            controls=[dates],
-                            alignment="center",
-                        )
-            
-            # ---Definición de las Columnas de la DataTable ---
-            columns=[
+        # ---Definición de las Columnas de la DataTable ---
+        columns=[
                 DataColumn(ft.Text("Neo id"), 
                               heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
                 DataColumn(ft.Text("Name"), 
@@ -217,6 +231,30 @@ class myapp:
                 DataColumn(ft.Text("Hazardous"), 
                               heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
             ]
+        #---Resultados de conexón con la API NeoWs---
+        if Neows: #---Si la conexión es éxitosa---
+            #---Contador de elementos widget Ateroid---
+            count = Text(f"Elements: {Neows['element_count']}",
+                            size=16,
+                            color=ft.Colors.WHITE,
+                            text_align=ft.TextAlign.CENTER)
+            neows_count = Row(
+                        controls=[count],
+                        alignment="center", #---Alineación horizontal---
+            )
+
+            #---Fecha de la publicación---
+            start_date = list(Neows['near_earth_objects'].keys())[1] # Fecha de inicio de la busqueda
+            end_date= list(Neows['near_earth_objects'].keys())[0] # Fecha final de la busqueda
+
+            dates = Text(f"From: " + str(start_date) + " / To: " + str(end_date),
+                            size=16,
+                            color=ft.Colors.YELLOW,
+                            text_align=ft.TextAlign.CENTER)
+            neows_date = Row(
+                            controls=[dates],
+                            alignment="center",
+                        )
             
             # Lista para acumular todas las DataRow generadas.
             all_rows= [] 
@@ -252,60 +290,28 @@ class myapp:
                             # --- Añade la nueva fila a la lista de todas las filas ---      
                             all_rows.append(rows) 
 
-            #---Tabla de widget Asteroids NeoWs---
+            #---Rows tabla de widget Asteroids NeoWs---
             table= DataTable(
-                #--- Configuración DataTable ---
-                columns=columns, 
+                columns=columns,
                 rows=all_rows,
-                width=1300,
+                width=1200, 
                 border=ft.border.all(1, ft.Colors.BLUE_500),
-                border_radius=10,
+                border_radius=6,
                 vertical_lines=ft.border.BorderSide(2, ft.Colors.BLUE_500),
                 horizontal_lines=ft.border.BorderSide(2, ft.Colors.BLUE_500),
                 heading_text_style=ft.TextStyle(weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_500),
                 data_text_style=ft.TextStyle(color=ft.Colors.WHITE),
-                column_spacing=10,
+                column_spacing=15,
             )
             neows_table= Row(
                         controls=[table],
                         alignment="center", #---Alineación horizontal---
                     )
 
-        else: #---Si la conexión con la API NeoWs es fallida
-            label = ft.Text(f'Error: conexión fallida con el servidor', #---Aviso de conexión fallida--- 
-                            size=40,
-                            color=ft.Colors.RED, 
-                            text_align=ft.TextAlign.CENTER)
-            neows_label = Row(
-                        controls=[label],
-                        alignment="center", #---Alineación horizontal---
-                    )
-
-        #---Contenedor widgets apod---
-        if Apod: #---Si la conexión es éxitosa---
-            news_container = Container(
-                    content=ft.Column(
-                        controls=[
-                            apod_label,
-                            apod_date,
-                            apod_imagen,
-                            apod_content
-                        ],
-                    ),padding=20 
-                )  
-        else: #---Si la conexión es fallida---
-            news_container = Container(
-                        content=ft.Column(
-                            controls=[
-                                apod_label,
-                            ],
-                        ),padding=250 
-                    )
-
-        #---Contenedor widgets neows---
+        #---Contenedor widgets NeoWs---
         if Neows:#---Si la conexión es éxitosa---
             asteroid_container = Container(
-                        content=ft.Column(
+                        content=Column(
                                 controls=[
                                     neows_label,
                                     neows_count,
@@ -316,11 +322,11 @@ class myapp:
                 )
         else: #---Si la conexión es fallida---
             asteroid_container = Container(
-                        content=ft.Column(
+                        content=Column(
                                 controls=[
                                     neows_label,
                             ],
-                    ),padding=250 
+                    ),padding=10 
                 )
 
         page.add(news_container)

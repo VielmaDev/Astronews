@@ -16,15 +16,15 @@ now= date.today() # Fecha actual tomada del servidor
 
 def apod(): # Conexión a la Api APOD (Astronomy Picture of the Day)
         try:
-                # Parámetros de busqueda
-                params= {
+            # Parámetros de busqueda
+            params= {
                     "api_key":api_key,
                     "date":now,
-                    }
-                # Solicitud GET a la API
-                response = requests.get(URL_API_APOD, params= params) 
+                }
+            # Solicitud GET a la API
+            response = requests.get(URL_API_APOD, params= params) 
 
-                if response.status_code == 200:
+            if response.status_code == 200:
                     apod_data = response.json()  # Se convierte la respuesta a JSON
                     return apod_data # Retorno resultado
 
@@ -37,18 +37,18 @@ def apod(): # Conexión a la Api APOD (Astronomy Picture of the Day)
 
 def neows(): # Conexión a la Api NeoWs (Near Earth Object Web Service)      
         try:
-                # Parámetros de busqueda
-                params= {
+            # Parámetros de busqueda
+            params= {
                     "api_key":api_key,
                     "start_date":now,
-                    "end_date":'2025-11-20',
-                    }
-                # Intenta realizar la solicitud GET a la API
-                response = requests.get(URL_API_NEOWS, params= params)
+                    "end_date":'2025-11-22',
+                }
+            # Intenta realizar la solicitud GET a la API
+            response = requests.get(URL_API_NEOWS, params= params)
 
-                if response.status_code == 200:
-                    neows_data = response.json() # Se convierte la respuesta a JSON
-                    return neows_data # Retorno resultado
+            if response.status_code == 200:
+                neows_data = response.json() # Se convierte la respuesta a JSON
+                return neows_data # Retorno resultado
 
         except requests.exceptions.RequestException as e:
             neows_data=(f"Error al conectar con la API NeoWs: {e}") # Error de conexión con la api
@@ -56,5 +56,6 @@ def neows(): # Conexión a la Api NeoWs (Near Earth Object Web Service)
         except json.JSONDecodeError as e:
            neows_data=(f"Error al decodificar JSON: {e}")  # Maneja errores al decodificar JSON
 
-def search_date_picker():
-      pass
+
+def search_date_picker(request):
+    pass
