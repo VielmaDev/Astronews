@@ -61,5 +61,5 @@ def apod_page():
                             controls=[label],
                             alignment="center",
                         )
-            return apod_label
+            return [apod_label]
           
