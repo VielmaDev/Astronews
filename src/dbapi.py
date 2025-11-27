@@ -14,7 +14,7 @@ api_key = "c2OYvrWfzSWPDRAburcCkTmIc0iKnAZk88xLwaVq"
 # Parametros de busqueda
 now= date.today() # Fecha actual tomada del servidor
 
-def apod(): # Conexión a la Api APOD (Astronomy Picture of the Day)
+def apod(): # Conexión con la Api APOD (Astronomy Picture of the Day)
         try:
             # Parámetros de busqueda
             params= {
@@ -35,7 +35,7 @@ def apod(): # Conexión a la Api APOD (Astronomy Picture of the Day)
             apod_data=("Error al decodificar JSON: {e}")  # Manejo de errores al decodificar JSON
 
 
-def neows(): # Conexión a la Api NeoWs (Near Earth Object Web Service)      
+def neows(): # Conexión con la Api NeoWs (Near Earth Object Web Service)      
         try:
             # Parámetros de busqueda
             params= {

@@ -1,6 +1,6 @@
 import flet as ft
 from flet import TextField, ElevatedButton, Column, Row, Text, Container, alignment, Dropdown, dropdown, Colors, Image, DataRow, DataCell, DataTable, DataColumn, DatePicker
-import dbapi
+import dbapi, apod
 import datetime
 from time import strftime
 
@@ -9,9 +9,10 @@ ORIGINAL_API_FORMAT = "%Y-%m-%d" #Formato ISO
 API_DATE_FORMAT = "%d-%m-%Y" #Nuevo formato fecha a convertir.
 
 #---Conexión con módulo dbapi--- 
-Apod= dbapi.apod()
+#Apod= dbapi.apod()
 Neows= dbapi.neows()
 Alert= dbapi.alert() # Llama a la función control de falla de conexión API´s
+apod_module= apod.apod_page()
 
 
 class myapp:
@@ -108,92 +109,30 @@ class myapp:
         ],   
     )
 
-        #---Widget menú APOD---
-        #---Resultados de conexón con la API APOD---
-        if Apod: #---Si la conexión es éxitosa---
-            #---Título de la publicación---        
-            label = Text(f"{Apod['title']}", 
-                            size=25,
-                            color=ft.Colors.BLUE,
-                            text_align=ft.TextAlign.CENTER)
-            apod_label = Row(
-                            controls=[label],
-                            alignment="center",
-                        )
-            
-            #---Convertidor de la cadena date en un objeto 'datetime'---
-            #date_objeto = datetime.strptime(Apod['date'], ORIGINAL_API_FORMAT) 
-
-            #---Formatea el objeto 'datetime' al nuevo formato de cadena---
-            #date_format = date_objeto.strftime(API_DATE_FORMAT)
-
-            #---Fecha de la publicación---
-            dates = Text(Apod['date'],
-                            size=17,
-                            color=ft.Colors.WHITE,
-                            text_align=ft.TextAlign.CENTER)
-            apod_date = Row(
-                            controls=[dates],
-                            alignment="center",
-                        )
-
-            #---Imagen de la publicación---
-            imagen = Image(src=f"{Apod['url']}", width=380, height=380)
-            apod_imagen = Row(
-                            controls=[imagen],
-                            alignment="center", #---Alineación horizontal---
-                            vertical_alignment="center"  #---Alineación vertical---
-                        )
-            #---Contenido de la publicación---
-            apod_content = ft.Container(
-                    content=ft.Column([
-                            ft.Text(f"{Apod['explanation']}"
-                                    ,size=16,
-                                    color=ft.Colors.WHITE,
-                                    text_align=ft.TextAlign.JUSTIFY),
-                        ]),
-                    padding=20)
-        else: #---Si la conexión es fallida---
-            label = ft.Text(f'Error: conexión fallida con el servidor', 
-                            size=40,
-                            color=ft.Colors.RED,
-                            text_align=ft.TextAlign.CENTER)
-            apod_label = Row(
-                            controls=[label],
-                            alignment="center",
-                        )
-        #---Contenedor widgets Apod---
-        if Apod: #---Si la conexión es éxitosa---
-            news_container = Container(
+        #---Widget del menú APOD---
+        if apod_module: #---Si la conexión es éxitosa---
+                news_container = Container(
                     content=Column(
                         controls=[
-                            apod_label,
-                            apod_date,
-                            apod_imagen,
-                            apod_content
+                            apod_module[0], #---Etiqueta---
+                            apod_module[1], #---Title---
+                            apod_module[2], #---Date---
+                            apod_module[3], #---Imagen---
+                            apod_module[4], #---Content---
                         ],
                     ),padding=20 
-                )  
+                )          
         else: #---Si la conexión es fallida---
             page.add(Alert)
             page.open(Alert)
-            label = Text(f"Astronomy Picture of the Day", 
-                            size=20,
-                            color=ft.Colors.RED,
-                            text_align=ft.TextAlign.CENTER)
-            apod_label = Row(
-                            controls=[label],
-                            alignment="center",
-                        )
             news_container = Container(
                     content=Column(
                         controls=[
-                            apod_label,
+                            apod_module[0], #---Etiqueta---
                         ],
-                    ),padding=20 
+                    ),padding=18 
                 )
            
-
         #---Widget Asteriod NeoWs---
         label = Text("Near Earth Object Web Service", #---Encabezado principal de Asteroid NeoWs---
                             size=20,
