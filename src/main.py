@@ -4,7 +4,6 @@ import dbapi, apod, neows
 import datetime
 
 #---Conexión con módulos--- 
-Alert= dbapi.alert() # Llama a la función control de falla de conexión API´s
 apod_module= apod.apod_page() #---Módulo apod---
 neows_module= neows.neows_pages() #---Módulo neows---
 
@@ -53,26 +52,19 @@ class myapp:
                 page.appbar.leading = ft.Icon(ft.Icons.EXPLORE) #---Cambiamos el icono para el ejemplo
                 page.remove(news_container)
                 page.add(asteroid_container)
-            
-        #---Widget Calendario---
-        def handle_change(e):  #---Función fecha seleccionada---
-            #page.add(ft.Text(f"Date changed: {e.control.value.strftime('%m/%d/%Y')}"))
-            selected_date = e.control.value.strftime('%Y/%m/%d')
-            dbapi.search_date_picker(selected_date)
-        def handle_dismissal(e): 
-            #page.add(ft.Text(f"DatePicker dismissed"))
-            pass
-        def date_picker(e):  #---Calendario (DatePicker)---
+
+        #---Calendario (DatePicker)---
+        def date_picker(e): 
             page.open(DatePicker(
                             first_date=datetime.datetime
                                     (year=2000, month=10, day=1),
                             last_date=datetime.datetime
                                     (year=2030, month=12, day=31),
-                            on_change=handle_change,
-                            on_dismiss=handle_dismissal
+                            on_change= dbapi.handle_change,
+                            on_dismiss=dbapi.handle_dismissal,
                         )
-                    )
-            
+                    ),
+
         #---Barra principal del menú---
         page.appbar = ft.AppBar(
         leading=ft.Icon(ft.Icons.NEWSPAPER),
@@ -81,8 +73,8 @@ class myapp:
         center_title=False,
         bgcolor=Colors.SURFACE_CONTAINER_HIGHEST,
         actions=[
-            ft.IconButton(ft.Icons.CALENDAR_MONTH, 
-                          on_click=date_picker,
+            ft.IconButton(ft.Icons.CALENDAR_MONTH,
+                          on_click= date_picker,
             ),
             ft.PopupMenuButton(
                 items=[
@@ -102,50 +94,18 @@ class myapp:
         ],   
     )
 
-        #---Widget del menú APOD---
-        if apod_module: #---Si la conexión es éxitosa---
-                news_container = Container(
-                    content=Column(
-                        controls=[
-                            apod_module[0], #---Etiqueta---
-                            apod_module[1], #---Title---
-                            apod_module[2], #---Date---
-                            apod_module[3], #---Imagen---
-                            apod_module[4], #---Content---
-                        ],
-                    ),padding=20 
-                )          
-        else: #---Si la conexión es fallida---
-            page.add(Alert)
-            page.open(Alert)
-            news_container = Container(
-                    content=Column(
-                        controls=[
-                            apod_module[0], #---Etiqueta---
-                        ],
-                    ),padding=18 
-                )
+        #---Contenedor widget APOD---
+        if apod_module: 
+                news_container= apod_module[0]
+        else:
+            news_container= apod_module[0]
+            
+        #---Contenedor widgets NeoWs---
+        if neows_module: 
+            asteroid_container = neows_module[0]
+        else:
+           asteroid_container= neows_module[0] 
 
-        #---widgets del menú NeoWs---
-        if neows_module:#---Si la conexión es éxitosa---
-            asteroid_container = Container(
-                        content=Column(
-                                controls=[
-                                    neows_module[0], #---Title---
-                                    neows_module[1], #---Count elements--
-                                    neows_module[2], #---Date---
-                                    neows_module[3], #---DataTable---
-                            ],
-                    ),padding=10 
-                )
-        else: #---Si la conexión es fallida---
-            asteroid_container = Container(
-                        content=Column(
-                                controls=[
-                                    neows_module[0], #---Title---
-                            ],
-                    ),padding=10 
-                )
 
         page.add(news_container)
         page.update()

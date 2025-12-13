@@ -1,23 +1,23 @@
 import flet as ft
 import dbapi
 
-#---Conexión con módulo dbapi ---función neows--- 
-Neows= dbapi.neows()
-
 def neows_pages():
-        if Neows: #---Si la conexión es éxitosa---
-            #---Encabezado principal de Asteroid NeoWs---
-            label = ft.Text("Near Earth Object Web Service", 
-                            size=20,
-                            color=ft.Colors.RED, 
-                            text_align=ft.TextAlign.CENTER)
-            neows_label = ft.Row(
-                        controls=[label],
-                        alignment="center",
-                    )
-            
-            # ---Definición de las Columnas DataTable ---
-            columns=[
+    #---Encabezado principal de Asteroid NeoWs---
+    label = ft.Text("Near Earth Object Web Service", 
+                        size=20,
+                        color=ft.Colors.RED, 
+                        text_align=ft.TextAlign.CENTER)
+    neows_label = ft.Row(
+                    controls=[label],
+                    alignment="center",
+                )
+    
+    Neows= dbapi.neows() #---Conexión con módulo dbapi---
+    
+    while Neows: #---Si la conexión es éxitosa---
+        
+        # ---Definición de las Columnas DataTable ---
+        columns=[
                 ft.DataColumn(ft.Text("Neo id"), 
                               heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
                 ft.DataColumn(ft.Text("Name"), 
@@ -38,33 +38,33 @@ def neows_pages():
                               heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
             ]
             
-            #---Contador de elementos widget Ateroid---
-            count = ft.Text(f"Elements: {Neows['element_count']}",
+        #---Contador de elementos widget Ateroid---
+        count = ft.Text(f"Elements: {Neows['element_count']}",
                             size=16,
                             color=ft.Colors.BLUE,
                             text_align=ft.TextAlign.CENTER)
-            neows_count = ft.Row(
+        neows_count = ft.Row(
                         controls=[count],
                         alignment="center", #---Alineación horizontal---
             )
 
-            #---Fecha de la publicación---
-            start_date = list(Neows['near_earth_objects'].keys())[1] # Fecha de inicio de la busqueda
-            end_date= list(Neows['near_earth_objects'].keys())[0] # Fecha final de la busqueda
-            dates = ft.Text(f"From: " + str(start_date) + " / To: " + str(end_date),
+        #---Fecha de la publicación---
+        start_date = list(Neows['near_earth_objects'].keys())[1] # Fecha de inicio de la busqueda
+        end_date= list(Neows['near_earth_objects'].keys())[0] # Fecha final de la busqueda
+        dates = ft.Text(f"From: " + str(start_date) + " / To: " + str(end_date),
                             size=16,
                             color=ft.Colors.WHITE,
                             text_align=ft.TextAlign.CENTER)
-            neows_date = ft.Row(
+        neows_date = ft.Row(
                             controls=[dates],
                             alignment="center",
                         )
             
-            # Lista Row DataTable.
-            all_rows= [] 
+        # Lista Row DataTable.
+        all_rows= [] 
             
-            #---El bucle for itera sobre cada diccionario 'Neows'---
-            for neos_list in Neows['near_earth_objects'].values():
+        #---El bucle for itera sobre cada diccionario 'Neows'---
+        for neos_list in Neows['near_earth_objects'].values():
                 for neo_data in neos_list:
                         for approach_data in neo_data['close_approach_data']:
                         # ---Definición de las Filas (Rows) de la DataTable ---
@@ -93,8 +93,8 @@ def neows_pages():
                             # --- Añade la nueva fila a la lista de todas las filas ---      
                             all_rows.append(rows) 
 
-            #---Rows tabla de widget Asteroids NeoWs---
-            table= ft.DataTable(
+        #---Rows tabla de widget Asteroids NeoWs---
+        table= ft.DataTable(
                 columns=columns,
                 rows=all_rows,
                 width=1200, 
@@ -106,21 +106,22 @@ def neows_pages():
                 data_text_style=ft.TextStyle(color=ft.Colors.WHITE),
                 column_spacing=15,
             )
-            neows_table= ft.Row(controls=[table],
+        neows_table= ft.Row(controls=[table],
                         alignment="center", #---Alineación horizontal---
                     )
+
+        neows_container = ft.Container(
+                        content=ft.Column(
+                                controls=[
+                                    neows_label,
+                                    neows_count, #---Count elements--
+                                    neows_date, #---Date---
+                                    neows_table, #---DataTable---
+                            ],
+                    ),padding=10 
+                )
             
-            return [neows_label, neows_count, neows_date, neows_table]
-        
-        else:
-            #---Encabezado principal de Asteroid NeoWs---
-            label = ft.Text("Near Earth Object Web Service", 
-                            size=20,
-                            color=ft.Colors.RED, 
-                            text_align=ft.TextAlign.CENTER)
-            neows_label = ft.Row(
-                        controls=[label],
-                        alignment="center",
-                    )
-            
-            return [neows_label]
+        return [neows_container]
+    
+    else:
+        return[neows_label] 

@@ -2,70 +2,61 @@ import flet as ft
 import requests, json
 from datetime import date
 
-# CONFIGURACIÓN A LA CONEXIÓN DE LAS API's:
-
-# URLs:
+#---CONFIGURACIÓN A LA CONEXIÓN DE LAS API's---
+#---URLs---
 URL_API_APOD="https://api.nasa.gov/planetary/apod?"  # URL de la API APOD
 URL_API_NEOWS="https://api.nasa.gov/neo/rest/v1/feed?" # URL de la API NeoWs
 
-# key para acceso:
+#---key para acceso---
 api_key = "c2OYvrWfzSWPDRAburcCkTmIc0iKnAZk88xLwaVq"
 
-# Parametros de busqueda
+#---Parametros de busqueda---
 now= date.today() # Fecha actual tomada del servidor
 
-def apod(): # Conexión con la Api APOD (Astronomy Picture of the Day)
-        try:
-            # Parámetros de busqueda
-            params= {
-                    "api_key":api_key,
-                    "date":now,
-                }
-            # Solicitud GET a la API
-            response = requests.get(URL_API_APOD, params= params) 
+def handle_change(e): #---Función busqueda por fecha---
+        #selected_date= e.control.value.strftime('%Y/%m/%d')
+        #return selected_date
+        pass
 
-            if response.status_code == 200:
-                    apod_data = response.json()  # Se convierte la respuesta a JSON
-                    return apod_data # Retorno resultado
+def handle_dismissal(e):#---Función cierre de busqueda---
+        pass
+
+def apod(): # Conexión con la API APOD (Astronomy Picture of the Day)
+        try:
+        # Parámetros de busqueda
+                params= {
+                   "api_key":api_key,
+                   "date":now,
+                }
+                # Solicitud GET a la API
+                response = requests.get(URL_API_APOD, params= params)
+
+                if response.status_code == 200:
+                        apod_data = response.json()  # Se convierte la respuesta a JSON
+                        return apod_data # Retorno resultado
+                
+        except requests.exceptions.RequestException as e:
+                return f"Error: {str(e)} en conexión con la API´s" #---Error de conexión con la api---
+        except json.JSONDecodeError as e:
+                return f"Error al decodificar JSON:{str(e)}" #---Manejo de errores al decodificar JSON---
+
+def neows(): # Conexión con la API NeoWs (Near Earth Object Web Service)
+        try:
+        # Parámetros de busqueda
+                params= {
+                        "api_key":api_key,
+                        "start_date":now,
+                        "end_date":'2025-12-12',
+                }
+        # Intenta realizar la solicitud GET a la API
+                response = requests.get(URL_API_NEOWS, params= params)
+
+                if response.status_code == 200:
+                        neows_data = response.json() # Se convierte la respuesta a JSON
+                        return neows_data # Retorno resultado
 
         except requests.exceptions.RequestException as e:
-            apod_data=("Error al conectar con la API APOD: {e}")# Error de conexión con la api
+                return f"Error al conectar con la API NeoWs: {str(e)}" # Error de conexión con la api
 
         except json.JSONDecodeError as e:
-            apod_data=("Error al decodificar JSON: {e}")  # Manejo de errores al decodificar JSON
-
-
-def neows(): # Conexión con la Api NeoWs (Near Earth Object Web Service)      
-        try:
-            # Parámetros de busqueda
-            params= {
-                    "api_key":api_key,
-                    "start_date":now,
-                    "end_date":'2025-11-22',
-                }
-            # Intenta realizar la solicitud GET a la API
-            response = requests.get(URL_API_NEOWS, params= params)
-
-            if response.status_code == 200:
-                neows_data = response.json() # Se convierte la respuesta a JSON
-                return neows_data # Retorno resultado
-
-        except requests.exceptions.RequestException as e:
-            neows_data=(f"Error al conectar con la API NeoWs: {e}") # Error de conexión con la api
-
-        except json.JSONDecodeError as e:
-           neows_data=(f"Error al decodificar JSON: {e}")  # Maneja errores al decodificar JSON
-
-
-def alert(): #---Control falla en conexión con las API's
-        return ft.AlertDialog(
-                    title=ft.Text("Alert"),
-                    content=ft.Text("No connection to the API network!"),
-                    alignment=ft.alignment.center,
-                    on_dismiss=lambda e: print("Dialog dismissed!"),
-                    title_padding=ft.padding.all(25),
-        )
-
-
-def search_date_picker(request):
-    pass
+                return f"Error al decodificar JSON: {str(e)}"  # Maneja errores al decodificar JSO
