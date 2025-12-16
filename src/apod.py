@@ -53,10 +53,11 @@ def apod_page():
                                 alignment="center",
                             )
         
+        #---Contenedor widget APOD---
         apod_container = ft.Container(
                     content=ft.Column(
                         controls=[
-                            apod_label,
+                            apod_label, #---Identificador---
                             apod_title, #---Title---
                             apod_date, #---Date---
                             apod_imagen, #---Imagen---
@@ -65,8 +66,17 @@ def apod_page():
                     ),padding=20 
                 )
                 
-        return [apod_container]
+        return apod_container #---Retorno---
     
     else:
-        return[apod_label] 
+        #---Aviso de falla en conexión con la red APOD---
+        dlg = ft.page.open(ft.AlertDialog(
+                    title=ft.Text("Warning"),
+                    content=ft.Text("No connection to the API network!"),
+                    alignment=ft.alignment.center,
+                    on_dismiss=lambda e: print("Dialog dismissed!"),
+                    title_padding=ft.padding.all(25),
+                )
+            )
+        return dlg #---Retorno---
     

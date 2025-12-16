@@ -110,10 +110,11 @@ def neows_pages():
                         alignment="center", #---Alineación horizontal---
                     )
 
+        #---Contenedor widget NeoWs---
         neows_container = ft.Container(
                         content=ft.Column(
                                 controls=[
-                                    neows_label,
+                                    neows_label, #---Identificador---
                                     neows_count, #---Count elements--
                                     neows_date, #---Date---
                                     neows_table, #---DataTable---
@@ -121,7 +122,16 @@ def neows_pages():
                     ),padding=10 
                 )
             
-        return [neows_container]
+        return neows_container #---Retorno---
     
     else:
-        return[neows_label] 
+         #---Aviso de falla en conexión con la red NeoWs---
+        dlg = ft.page.open(ft.AlertDialog(
+                    title=ft.Text("Warning"),
+                    content=ft.Text("No connection to the API network!"),
+                    alignment=ft.alignment.center,
+                    on_dismiss=lambda e: print("Dialog dismissed!"),
+                    title_padding=ft.padding.all(25),
+                )
+            )
+        return dlg #---Retorno---

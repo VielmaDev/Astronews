@@ -39,8 +39,8 @@ class myapp:
                 #---Actualizar el AppBar y el contenido de la página
                 page.appbar.title = Text("APOD")
                 page.appbar.leading = ft.Icon(ft.Icons.NEWSPAPER)
-                page.remove(asteroid_container)
-                page.add(news_container)
+                page.remove(neows_module)
+                page.add(apod_module)
                 
             elif item_click.text == "Asteroids NeoWs":
                 #---Si se hizo clic en "Asteroids NeoWs", desmarcamos y deshabilitamos "APOD"
@@ -50,8 +50,8 @@ class myapp:
                 #---Actualizar el AppBar y el contenido de la página
                 page.appbar.title = Text("Asteroids NeoWs")
                 page.appbar.leading = ft.Icon(ft.Icons.EXPLORE) #---Cambiamos el icono para el ejemplo
-                page.remove(news_container)
-                page.add(asteroid_container)
+                page.remove(apod_module)
+                page.add(neows_module)
 
         #---Calendario (DatePicker)---
         def date_picker(e): 
@@ -94,20 +94,7 @@ class myapp:
         ],   
     )
 
-        #---Contenedor widget APOD---
-        if apod_module: 
-                news_container= apod_module[0]
-        else:
-            news_container= apod_module[0]
-            
-        #---Contenedor widgets NeoWs---
-        if neows_module: 
-            asteroid_container = neows_module[0]
-        else:
-           asteroid_container= neows_module[0] 
-
-
-        page.add(news_container)
+        page.add(apod_module)
         page.update()
 
 if __name__ == "__main__":
