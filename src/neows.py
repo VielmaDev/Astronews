@@ -14,7 +14,7 @@ def neows_pages():
     
     Neows= dbapi.neows() #---Conexión con módulo dbapi---
     
-    while Neows: #---Si la conexión es éxitosa---
+    if isinstance(Neows, dict): #---Validación de diccionario de datos---
         
         # ---Definición de las Columnas DataTable ---
         columns=[
@@ -121,17 +121,15 @@ def neows_pages():
                             ],
                     ),padding=10 
                 )
-            
         return neows_container #---Retorno---
     
-    else:
-         #---Aviso de falla en conexión con la red NeoWs---
-        dlg = ft.page.open(ft.AlertDialog(
-                    title=ft.Text("Warning"),
-                    content=ft.Text("No connection to the API network!"),
-                    alignment=ft.alignment.center,
-                    on_dismiss=lambda e: print("Dialog dismissed!"),
-                    title_padding=ft.padding.all(25),
+    else:  #---Aviso de falla en conexión con la API´s---
+        dialog= ft.AlertDialog(
+                    title=ft.Text("Aviso:"),
+                    content=ft.Text(f"{Neows}"),
+                    open=True,
                 )
-            )
-        return dlg #---Retorno---
+        
+        #---Contenedor widget APOD---
+        neows_container = dialog
+        return neows_container #---Retorno---
