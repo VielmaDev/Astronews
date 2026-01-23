@@ -11,40 +11,39 @@ api_key = "c2OYvrWfzSWPDRAburcCkTmIc0iKnAZk88xLwaVq"
 #---Parámetros---
 now= date.today() #---Fecha actual---
 
-def apod(): # Conexión API APOD (Astronomy Picture of the Day)
+def handle_change(e): #---Busqueda por fecha---
+        selected_date= e.control.value.strftime('%Y-%m-%d')  #---Fecha seleccionada---
+        return selected_date
+
+def handle_dismissal(e):#---Cierre de busqueda---
+        pass
+
+def apod(): # Conexión con la API APOD(Astronomy Picture of the Day)
         try:
         #---Parámetros de busqueda---
                 params= {
                    "api_key":api_key,
-                   "date":now,
+                   "date":handle_change,
                 }
                 #---Solicitud GET a la API---
                 response = requests.get(URL_API_APOD, params= params)
 
                 if response.status_code == 200: #---Validación de status---
-                        apod_data = response.json()  #---Se convierte la respuesta a JSON---
+                        apod_data = response.json()  #---Respuesta en formato JSON---
                         return apod_data #---Retorno de resultado---
-                else: #---falla en validación de status---
-                       apod_data = f"Falla en conexión con la API APOD."
+                else: 
+                       apod_data = f"Falla en conexión con la red APOD."
                        return apod_data #---Retorno de resultado--- 
                 
-        #---Error de conexión con la api---      
+        #---Error de conexión con la API---      
         except requests.exceptions.RequestException as e: 
-                apod_data = f"Error: {str(e)} en conexión con la API's."
+                apod_data = f"Error: {str(e)} en conexión."
                 return apod_data #---Retorno de resultado---
         
         #---Manejo de errores al decodificar JSON--- 
         except json.JSONDecodeError as e:
                 apod_data = f"Error: {str(e)} al decodificar JSON."
                 return  apod_data #---Retorno de resultado---
-        
-def handle_change(e): #---Busqueda por fecha---
-        #selected_date= e.control.value.strftime('%Y/%m/%d')
-        #return selected_date
-        pass
-
-def handle_dismissal(e):#---Cierre de busqueda---
-        pass
 
 def neows(): # Conexión API NeoWs (Near Earth Object Web Service)
         try:
@@ -52,7 +51,7 @@ def neows(): # Conexión API NeoWs (Near Earth Object Web Service)
                 params= {
                         "api_key":api_key,
                         "start_date":now,
-                        "end_date":'2026-01-06'
+                        "end_date":'2026-01-21'
                 }
         #---Intenta realizar la solicitud GET a la API---
                 response = requests.get(URL_API_NEOWS, params= params)
