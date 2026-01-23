@@ -1,10 +1,11 @@
 import flet as ft
-from flet import Column, Text, Container, Colors, DatePicker
+from flet import Text, Colors, DatePicker
 import dbapi, apod, neows
 import datetime
 
 #---Conexión con módulos--- 
-apod_module= apod.apod_page() #---Módulo apod---
+apod_module= apod.apod_page() #---Módulo apod_page---
+apod_content= apod.apod_content() #---Módulo apod_content---
 neows_module= neows.neows_pages() #---Módulo neows---
 
 class myapp:
@@ -64,6 +65,7 @@ class myapp:
                             on_dismiss=dbapi.handle_dismissal,
                         )
                     ),
+            page.add(apod_content) 
 
         #---Barra principal del menú---
         page.appbar = ft.AppBar(
@@ -94,10 +96,8 @@ class myapp:
         ],   
     )
 
-        page.add(apod_module)
         page.update()
-
+        page.add(apod_module)
+        
 if __name__ == "__main__":
     ft.app(target = myapp)
-
-
