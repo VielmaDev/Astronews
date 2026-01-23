@@ -1,8 +1,7 @@
 import flet as ft
 import dbapi
 
-
-def apod_page():
+def apod_page(): #---Identificador de página---
     #--Widget principal del menú APOD---
     label = ft.Text(f"Astronomy Picture of the Day", 
                             size=20,
@@ -13,11 +12,24 @@ def apod_page():
                         alignment="center",
                         ) 
     
-    apod= dbapi.apod() #---Conexión con módulo dbapi---
+    #---Contenedor widget APOD---
+    apod_identifier= ft.Container(
+                        content=ft.Column(
+                            controls=[
+                                apod_label, #---Identificador---
+                            ],
+                        ),padding=20 
+                    )
+    return apod_identifier #---Retorno---
 
-    if isinstance(apod, dict): #---Validación de diccionario de datos---
+def apod_content():
+    #---Variable de conexión con el módulo dbapi apod---
+    search= dbapi.apod() 
+
+    #---Validación de diccionario de datos---
+    if isinstance(search, dict): 
             #---Titulo de la publicación---
-            title= ft.Text(f"{apod['title']}", 
+            title= ft.Text(f"{search['title']}", 
                                     size=27,
                                     color=ft.Colors.BLUE,
                                     text_align=ft.TextAlign.CENTER)
@@ -27,7 +39,7 @@ def apod_page():
                                 )
 
             #---Fecha de la publicación---  
-            dates = ft.Text(f"{apod['date']}", 
+            dates = ft.Text(f"{search['date']}", 
                                     size=18,
                                     color=ft.Colors.WHITE,
                                     text_align=ft.TextAlign.CENTER)
@@ -37,7 +49,7 @@ def apod_page():
                                     )
                     
                 #---Imagen de la publicación---
-            imagen = ft.Image(src= apod['url'], 
+            imagen = ft.Image(src= search['url'], 
                                         width=380, 
                                         height=380
                                         )
@@ -48,7 +60,7 @@ def apod_page():
                                 )
 
             #---Contenido de la publicación---
-            content= ft.Text(f"{apod['explanation']}",
+            content= ft.Text(f"{search['explanation']}",
                                         size=16,
                                         color=ft.Colors.WHITE,
                                         text_align=ft.TextAlign.JUSTIFY)
@@ -61,7 +73,6 @@ def apod_page():
             apod_container = ft.Container(
                             content=ft.Column(
                                 controls=[
-                                    apod_label, #---Identificador---
                                     apod_title, #---Title---
                                     apod_date, #---Date---
                                     apod_imagen, #---Imagen---
@@ -71,10 +82,10 @@ def apod_page():
                         )
             return apod_container #---Retorno---
     
-    else:  #---Aviso de falla en conexión con la API´s---
+    else:  
         dialog= ft.AlertDialog(
-                    title=ft.Text("Aviso:"),
-                    content=ft.Text(f"{apod}"),
+                    title=ft.Text("Aviso:"), #---Aviso de falla en conexión---
+                    content=ft.Text(f"{search}"),
                     open=True,
                 )
         
