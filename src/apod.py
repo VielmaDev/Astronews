@@ -1,95 +1,42 @@
 import flet as ft
-import dbapi
+import requests, json
+from datetime import date
 
-def apod_page(): #---Identificador de página---
-    #--Widget principal del menú APOD---
-    label = ft.Text(f"Astronomy Picture of the Day", 
-                            size=20,
-                            color=ft.Colors.RED,
-                            text_align=ft.TextAlign.CENTER)
-    apod_label = ft.Row(
-                        controls=[label],
-                        alignment="center",
-                        ) 
-    
-    #---Contenedor widget APOD---
-    apod_identifier= ft.Container(
-                        content=ft.Column(
-                            controls=[
-                                apod_label, #---Identificador---
-                            ],
-                        ),padding=20 
-                    )
-    return apod_identifier #---Retorno---
+#---URL's---
+URL_API_APOD="https://api.nasa.gov/planetary/apod?"  #---URL API APOD---
+URL_API_NEOWS="https://api.nasa.gov/neo/rest/v1/feed?" #---URL API NeoWs---
 
-def apod_content():
-    #---Variable de conexión con el módulo dbapi apod---
-    search= dbapi.apod() 
+#---API key---
+api_key = "c2OYvrWfzSWPDRAburcCkTmIc0iKnAZk88xLwaVq"
 
-    #---Validación de diccionario de datos---
-    if isinstance(search, dict): 
-            #---Titulo de la publicación---
-            title= ft.Text(f"{search['title']}", 
-                                    size=27,
-                                    color=ft.Colors.BLUE,
-                                    text_align=ft.TextAlign.CENTER)
-            apod_title = ft.Row(
-                                controls=[title],
-                                alignment="center",
-                                )
+#---Fecha actual---
+now= date.today() 
 
-            #---Fecha de la publicación---  
-            dates = ft.Text(f"{search['date']}", 
-                                    size=18,
-                                    color=ft.Colors.WHITE,
-                                    text_align=ft.TextAlign.CENTER)
-            apod_date = ft.Row(
-                                controls=[dates],
-                                alignment="center",
-                                    )
-                    
-                #---Imagen de la publicación---
-            imagen = ft.Image(src= search['url'], 
-                                        width=380, 
-                                        height=380
-                                        )
-            apod_imagen = ft.Row(
-                                controls=[imagen],
-                                alignment="center", #---Alineación horizontal---
-                                vertical_alignment="center"  #---Alineación vertical---
-                                )
+#---Función conexión con API APOD---
+def apod_api(d):
+        try:
+            dates= d  #---Variable parámetro (fecha de busqueda)---  
+            
+            #---Parámetros de busqueda---
+            params= {
+                   "api_key":api_key,
+                   "date":dates,
+            }
 
-            #---Contenido de la publicación---
-            content= ft.Text(f"{search['explanation']}",
-                                        size=16,
-                                        color=ft.Colors.WHITE,
-                                        text_align=ft.TextAlign.JUSTIFY)
-            apod_content = ft.Column(
-                                    controls=[content],
-                                    alignment="center",
-                                    )
+            #---Solicitud GET a la API---
+            response = requests.get(URL_API_APOD, params= params)
+
+            if response.status_code == 200: #---Validación de status---
+                    apod_data = response.json()  #---Respuesta en formato JSON---
+                    return apod_data #---Retorno de resultado---
                 
-            #---Contenedor widget APOD---
-            apod_container = ft.Container(
-                            content=ft.Column(
-                                controls=[
-                                    apod_title, #---Title---
-                                    apod_date, #---Date---
-                                    apod_imagen, #---Imagen---
-                                    apod_content, #---Content---
-                                ],
-                            ),padding=20 
-                        )
-            return apod_container #---Retorno---
-    
-    else:  
-        dialog= ft.AlertDialog(
-                    title=ft.Text("Aviso:"), #---Aviso de falla en conexión---
-                    content=ft.Text(f"{search}"),
-                    open=True,
-                )
+        #---Error de conexión con la API---      
+        except requests.exceptions.RequestException as e: 
+                apod_data = f"Error: {str(e)} en conexión."
+                return apod_data #---Retorno de resultado---
         
-        #---Contenedor widget APOD---
-        apod_container = dialog
-        return apod_container #---Retorno---
-    
+        #---Manejo de errores al decodificar JSON--- 
+        except json.JSONDecodeError as e:
+                apod_data = f"Error: {str(e)} al decodificar JSON."
+                return apod_data #---Retorno de resultado--
+
