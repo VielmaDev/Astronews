@@ -13,9 +13,7 @@
 </div>
 
 <div class="container">
-    <img src="src="https://github.com/user-attachments/assets/6fd37f4b-4f16-48f5-96b6-2a4b53606074" />
-" />
-">
+    <img src="src="https://github.com/user-attachments/assets/6fd37f4b-4f16-48f5-96b6-2a4b53606074">
 </div>   
 
 <div class="container">
