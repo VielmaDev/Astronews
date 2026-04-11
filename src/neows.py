@@ -38,3 +38,32 @@ def neows_now():
         except json.JSONDecodeError as e:
                 neows_data= f"Error: {str(e)} al decodificar JSON."
                 return neows_data #---Retorno de resultado---
+
+#---Función neows_api (Fecha por busqueda)
+def neows_api(s, e):
+        try:
+                start_dates= s  #---Variable parámetro (fecha inicio)---
+                end_dates= e  #---Variable parámetro (fecha final)--- 
+
+        #---Parámetros de busqueda---
+                params= {
+                        "api_key":api_key,
+                        "start":start_dates,
+                        "end":end_dates,
+                }
+        #---Intenta realizar la solicitud GET a la API---
+                response = requests.get(URL_API_NEOWS, params= params)
+
+                if response.status_code == 200: #---Validación de status---
+                        neows_data = response.json() #---Se convierte la respuesta a JSON---
+                        return neows_data #---Retorno de resultado---
+                
+        #---Error de conexión con la api---
+        except requests.exceptions.RequestException as e:
+                neows_data= f"Error: {str(e)} al conectar con la API NeoWs."
+                return neows_data #---Retorno de resultado---
+         
+        #---Maneja errores al decodificar JSO---
+        except json.JSONDecodeError as e:
+                neows_data= f"Error: {str(e)} al decodificar JSON."
+                return neows_data #---Retorno de resultado---
