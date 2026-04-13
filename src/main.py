@@ -84,10 +84,6 @@ class myapp:
                     )
         
         #-------------Widget de la app APOD----------------------------
-        apod_calendar = ft.ElevatedButton(
-                        "Calendario",
-                        icon=ft.Icons.CALENDAR_MONTH,
-                        on_click= date_picker)
         #---Fecha de la publicación---
         select_date= ft.Text(f"{apod_now['date']}",
                             size=18,
@@ -139,10 +135,8 @@ class myapp:
                         )
 
         #-------------Widget de la app Neows----------------------------
-        if isinstance(neows_now, dict): #---Validación de diccionario de datos---
-        
-            # ---Definición de las Columnas DataTable ---
-            columns=[
+        # ---Definición de las Columnas DataTable ---
+        columns=[
                     ft.DataColumn(ft.Text("Neo id"), 
                                 heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
                     ft.DataColumn(ft.Text("Name"), 
@@ -163,6 +157,8 @@ class myapp:
                                 heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
                 ]
             
+        #---Validación de diccionario de datos---  
+        if isinstance(neows_now, dict): 
             #---Contador de elementos widget Ateroid---
             count = ft.Text(f"Elementos: {neows_now['element_count']}",
                                 size=16,
@@ -254,11 +250,14 @@ class myapp:
         center_title=False,
         bgcolor=Colors.SURFACE_CONTAINER_HIGHEST,
         actions=[
+            ft.IconButton(ft.Icons.CALENDAR_MONTH,
+                          on_click=date_picker,
+                          ),
             ft.PopupMenuButton(
                 items=[
                     ft.PopupMenuItem(text="APOD", 
                                      checked=False,
-                                     disabled=False,
+                                     disabled=True,
                                      on_click=check_item_clicked,
                     ),
                     ft.PopupMenuItem(), # divider
@@ -273,7 +272,6 @@ class myapp:
     )
         
         page.add(
-            apod_calendar,
             app_apod
         )
         page.update()
