@@ -14,7 +14,6 @@
 
 <div class="container">
     <img src="https://github.com/user-attachments/assets/212714ff-f9f9-4dd7-8910-3c02cc3e4e8e">
-">
 </div>   
 
 <div class="container">
