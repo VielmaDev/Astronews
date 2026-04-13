@@ -13,7 +13,8 @@
 </div>
 
 <div class="container">
-    <img src="https://github.com/user-attachments/assets/212714ff-f9f9-4dd7-8910-3c02cc3e4e8e">
+    <img src="https://github.com/user-attachments/assets/bf85ab08-fe22-4b19-9c1a-c3f265bb48fc">
+">
 </div>   
 
 <div class="container">
