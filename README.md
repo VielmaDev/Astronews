@@ -6,7 +6,6 @@
 
 <section>
     <img width="202" height="27" alt="AN_00844" src="https://github.com/user-attachments/assets/52d3f345-aec9-4e22-b71a-a475e398eb8b" />
->
 </section>
 
 <section>
