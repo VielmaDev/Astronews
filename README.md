@@ -5,6 +5,11 @@
 </caption>
 
 <section>
+    <img width="202" height="27" alt="AN_00844" src="https://github.com/user-attachments/assets/52d3f345-aec9-4e22-b71a-a475e398eb8b" />
+>
+</section>
+
+<section>
 <div class="container">
     <p>AstroNews es una aplicación que permitirá acceder y consultar información de las API's:  APOD (Astronomy Picture of the Day) y Asteroid NeoWs (Near Earth Object Web Service),  pertenecientes a la agencia espacial NASA.</p>
 </div>
